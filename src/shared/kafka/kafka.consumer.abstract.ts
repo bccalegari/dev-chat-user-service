@@ -4,17 +4,17 @@ import { DlqKafkaProducer } from '@shared/kafka/dlq-kafka.producer';
 import { EventPublisher } from '@shared/publishers/event.publisher';
 import { KafkaContext } from '@nestjs/microservices';
 import { safeStringify } from '@shared/utils/safe-stringify';
-import { logError } from '@shared/logger/log-error';
-import { Traceable } from '@shared/logger/trace.decorator';
+import { logError } from '@shared/logging/log-error';
+import { Traceable } from '@shared/logging/trace.decorator';
 
-export abstract class AbstractKafkaConsumer {
+export abstract class AbstractKafkaConsumer<T, U extends Record<string, any>> {
   private readonly _logger = new Logger(AbstractKafkaConsumer.name);
-  protected readonly SKIP_MESSAGE_FLAG = Symbol('skipMessage');
   protected abstract DLQ_TOPIC: string;
+  protected shouldSkipMessage: boolean = false;
 
   protected constructor(
     private readonly schemaRegistryService: SchemaRegistryGateway,
-    private readonly eventPublisher: EventPublisher,
+    private readonly eventPublisher: EventPublisher<U>,
     private readonly dlqKafkaProducer: DlqKafkaProducer,
   ) {
     this.schemaRegistryService = schemaRegistryService;
@@ -33,13 +33,14 @@ export abstract class AbstractKafkaConsumer {
     const nextOffset = parseInt(offset, 10) + 1;
 
     try {
-      const decodedMessage: Record<string, any> =
-        await this.schemaRegistryService.decode(message.value);
+      const decodedMessage: T = await this.schemaRegistryService.decode(
+        message.value,
+      );
       this._logger.log(`Decoded message: ${safeStringify(decodedMessage)}`);
 
       const event = this.handleMessage(decodedMessage);
 
-      if (event === this.SKIP_MESSAGE_FLAG) {
+      if (this.shouldSkipMessage) {
         this._logger.log(
           `Skipping message for topic=${context.getTopic()}, partition=${context.getPartition()}, offset=${offset}`,
         );
@@ -52,10 +53,17 @@ export abstract class AbstractKafkaConsumer {
       logError('Error processing kafka message', error, this._logger);
       await this.handleError(context, error);
       await this.commitOffset(context, nextOffset.toString());
+    } finally {
+      this.resetSkipMessageFlag();
     }
   }
 
-  protected abstract handleMessage(decodedMessage: Record<string, any>): any;
+  protected abstract handleMessage(decodedMessage: T): U;
+
+  private resetSkipMessageFlag() {
+    this.shouldSkipMessage = false;
+    this._logger.log('Resetting shouldSkipMessage flag to false');
+  }
 
   private async commitOffset(context: KafkaContext, offset: string) {
     const topic = context.getTopic();

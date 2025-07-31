@@ -14,12 +14,12 @@ export class UserNeo4jRepository implements UserRepository {
       const query = `
         CREATE (u:User {
           id: $id,
-          keycloakId: $keycloakId,
+          keycloak_id: $keycloakId,
           username: $username,
           email: $email,
           name: $name,
-          lastName: $lastName,
-          createdAt: $createdAt
+          last_name: $lastName,
+          created_at: $createdAt
         })
       `;
 
@@ -27,7 +27,7 @@ export class UserNeo4jRepository implements UserRepository {
         id: user.id,
         keycloakId: user.keycloakId,
         username: user.username,
-        email: user.email.getValue(),
+        email: user.email.value,
         name: user.name,
         lastName: user.lastName,
         createdAt: user.createdAt.toISOString(),

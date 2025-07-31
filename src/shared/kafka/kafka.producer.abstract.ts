@@ -2,7 +2,7 @@ import { Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Kafka, Producer } from 'kafkajs';
 import { ConfigService } from '@nestjs/config';
 import { SchemaRegistryGateway } from '@shared/kafka/schema-registry.gateway';
-import { logError } from '@shared/logger/log-error';
+import { logError } from '@shared/logging/log-error';
 
 export abstract class KafkaProducer implements OnModuleInit, OnModuleDestroy {
   private readonly kafka: Kafka;

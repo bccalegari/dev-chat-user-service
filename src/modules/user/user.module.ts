@@ -4,7 +4,7 @@ import { Neo4jModule } from '@shared/neo4j/neo4j.module';
 import { UserCreatedKafkaConsumer } from '@modules/user/adapters/inbound/user-created-kafka.consumer';
 import { UserEventPublisher } from '@modules/user/application/publishers/user-event.publisher';
 import { UserCreatedListener } from '@modules/user/application/listeners/user-created.listener';
-import { USER_REPOSITORY } from '@modules/user/user.tokens';
+import { USER_REPOSITORY } from '@modules/user/domain/repositories/user.repository.interface';
 import { UserNeo4jRepository } from '@modules/user/adapters/outbound/user-neo4j.repository';
 import {
   USER_EVENT_STRATEGY,

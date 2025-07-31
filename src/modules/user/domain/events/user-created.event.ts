@@ -1,3 +1,5 @@
+import { UserChangeEventValue } from '@modules/user/adapters/inbound/user-change.event';
+
 export class UserCreatedEvent {
   readonly keycloakId: string;
   readonly username: string;
@@ -19,13 +21,17 @@ export class UserCreatedEvent {
     this.lastName = lastName;
   }
 
-  static fromJson(json: Record<string, any>): UserCreatedEvent {
+  static fromUserChangeEvent(event: UserChangeEventValue): UserCreatedEvent {
+    if (!event) {
+      throw new Error('Invalid user event value');
+    }
+
     return new UserCreatedEvent(
-      json.id as string,
-      json.username as string,
-      json.email as string,
-      json.first_name as string,
-      json.last_name as string,
+      event.id,
+      event.username!,
+      event.email!,
+      event.first_name!,
+      event.last_name!,
     );
   }
 }

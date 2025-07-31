@@ -1,0 +1,282 @@
+{
+  "type": "record",
+  "name": "Envelope",
+  "namespace": "keycloak.public.user_entity",
+  "fields": [
+    {
+      "name": "before",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "Value",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "email",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null
+            },
+            {
+              "name": "email_constraint",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null
+            },
+            {
+              "name": "email_verified",
+              "type": {
+                "type": "boolean",
+                "connect.default": false
+              },
+              "default": false
+            },
+            {
+              "name": "enabled",
+              "type": {
+                "type": "boolean",
+                "connect.default": false
+              },
+              "default": false
+            },
+            {
+              "name": "federation_link",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null
+            },
+            {
+              "name": "first_name",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null
+            },
+            {
+              "name": "last_name",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null
+            },
+            {
+              "name": "realm_id",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null
+            },
+            {
+              "name": "username",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null
+            },
+            {
+              "name": "created_timestamp",
+              "type": [
+                "null",
+                "long"
+              ],
+              "default": null
+            },
+            {
+              "name": "service_account_client_link",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null
+            },
+            {
+              "name": "not_before",
+              "type": {
+                "type": "int",
+                "connect.default": 0
+              },
+              "default": 0
+            }
+          ],
+          "connect.name": "keycloak.public.user_entity.Value"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "after",
+      "type": [
+        "null",
+        "Value"
+      ],
+      "default": null
+    },
+    {
+      "name": "source",
+      "type": {
+        "type": "record",
+        "name": "Source",
+        "namespace": "io.debezium.connector.postgresql",
+        "fields": [
+          {
+            "name": "version",
+            "type": "string"
+          },
+          {
+            "name": "connector",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "ts_ms",
+            "type": "long"
+          },
+          {
+            "name": "snapshot",
+            "type": [
+              {
+                "type": "string",
+                "connect.version": 1,
+                "connect.parameters": {
+                  "allowed": "true,last,false,incremental"
+                },
+                "connect.default": "false",
+                "connect.name": "io.debezium.data.Enum"
+              },
+              "null"
+            ],
+            "default": "false"
+          },
+          {
+            "name": "db",
+            "type": "string"
+          },
+          {
+            "name": "sequence",
+            "type": [
+              "null",
+              "string"
+            ],
+            "default": null
+          },
+          {
+            "name": "ts_us",
+            "type": "long"
+          },
+          {
+            "name": "ts_ns",
+            "type": "long"
+          },
+          {
+            "name": "schema",
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "type": "string"
+          },
+          {
+            "name": "txId",
+            "type": [
+              "null",
+              "long"
+            ],
+            "default": null
+          },
+          {
+            "name": "lsn",
+            "type": [
+              "null",
+              "long"
+            ],
+            "default": null
+          },
+          {
+            "name": "xmin",
+            "type": [
+              "null",
+              "long"
+            ],
+            "default": null
+          }
+        ],
+        "connect.name": "io.debezium.connector.postgresql.Source"
+      }
+    },
+    {
+      "name": "op",
+      "type": "string"
+    },
+    {
+      "name": "ts_ms",
+      "type": [
+        "null",
+        "long"
+      ],
+      "default": null
+    },
+    {
+      "name": "ts_us",
+      "type": [
+        "null",
+        "long"
+      ],
+      "default": null
+    },
+    {
+      "name": "ts_ns",
+      "type": [
+        "null",
+        "long"
+      ],
+      "default": null
+    },
+    {
+      "name": "transaction",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "block",
+          "namespace": "event",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "total_order",
+              "type": "long"
+            },
+            {
+              "name": "data_collection_order",
+              "type": "long"
+            }
+          ],
+          "connect.version": 1,
+          "connect.name": "event.block"
+        }
+      ],
+      "default": null
+    }
+  ],
+  "connect.version": 2,
+  "connect.name": "keycloak.public.user_entity.Envelope"
+}

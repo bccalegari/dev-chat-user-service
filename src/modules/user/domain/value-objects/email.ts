@@ -1,5 +1,5 @@
 export class Email {
-  private readonly value: string;
+  readonly value: string;
   private static readonly emailRegex =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   private static readonly maxLength = 254;
@@ -14,9 +14,5 @@ export class Email {
       throw new Error(`Email cannot exceed ${Email.maxLength} characters`);
     }
     this.value = trimmedValue;
-  }
-
-  getValue(): string {
-    return this.value;
   }
 }

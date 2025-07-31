@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { Driver } from 'neo4j-driver';
 import { ConfigService } from '@nestjs/config';
 import * as neo4j from 'neo4j-driver';
-import { logError } from '@shared/logger/log-error';
+import { logError } from '@shared/logging/log-error';
 
 @Injectable()
 export class Neo4jGateway implements OnModuleDestroy {

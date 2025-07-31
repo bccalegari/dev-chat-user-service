@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SchemaRegistry } from '@kafkajs/confluent-schema-registry';
 import { ConfigService } from '@nestjs/config';
-import { logError } from '@shared/logger/log-error';
+import { logError } from '@shared/logging/log-error';
 import * as avro from 'avsc';
 
 @Injectable()
