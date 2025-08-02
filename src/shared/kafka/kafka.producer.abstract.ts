@@ -32,14 +32,12 @@ export abstract class KafkaProducer implements OnModuleInit, OnModuleDestroy {
     subject: string,
     message: T,
   ): Promise<void> {
-    this._logger.log(`Encoding message for subject=${subject}`);
+    this._logger.log(`Encoding message, subject=${subject}`);
 
     const encodedValue = await this.schemaRegistryGateway.encode(
       subject,
       message,
     );
-
-    this._logger.log(`Message encoded, sending to topic=${topic}`);
 
     try {
       await this.producer.send({
@@ -51,10 +49,10 @@ export abstract class KafkaProducer implements OnModuleInit, OnModuleDestroy {
         ],
       });
 
-      this._logger.log(`Message sent to topic=${topic}, subject=${subject}`);
+      this._logger.log(`Message sent, topic=${topic}, subject=${subject}`);
     } catch (error) {
       logError(
-        `Error sending message to topic=${topic}, subject=${subject}`,
+        `Error sending message, topic=${topic}, subject=${subject}`,
         error,
         this._logger,
       );

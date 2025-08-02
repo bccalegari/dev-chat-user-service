@@ -1,11 +1,17 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { USER_REPOSITORY } from '@modules/user/domain/repositories/user.repository.interface';
-import { UserRepository } from '@modules/user/domain/repositories/user.repository.interface';
+import {
+  USER_REPOSITORY,
+  UserRepository,
+} from '@modules/user/domain/repositories/user.repository.interface';
 import { OnEvent } from '@nestjs/event-emitter';
 import { UserCreatedEvent } from '@modules/user/domain/events/user-created.event';
 import { User } from '@modules/user/domain/entities/user';
 import { logError } from '@shared/logging/log-error';
-import { USER_EVENTS } from '@modules/user/application/user-events.contant';
+import { KafkaMessage } from '@shared/kafka/kafka-message';
+import { DeadLetterKafkaPublisher } from '@shared/kafka/dead-letter-kafka-publisher';
+import { TraceService } from '@shared/logging/trace.service';
+import { DeadLetterEvent } from '@shared/kafka/dead-letter.event';
+import { PROPERTIES } from '@app/app.properties';
 
 @Injectable()
 export class UserCreatedListener {
@@ -13,23 +19,32 @@ export class UserCreatedListener {
 
   constructor(
     @Inject(USER_REPOSITORY) private readonly repository: UserRepository,
+    private readonly dlqKafkaPublisher: DeadLetterKafkaPublisher,
   ) {}
 
-  @OnEvent(USER_EVENTS.create)
-  async execute(userDto: UserCreatedEvent): Promise<void> {
+  @OnEvent(PROPERTIES.USER.EVENTS.CREATE.NAME)
+  async execute(
+    event: UserCreatedEvent,
+    kafkaMessage: KafkaMessage,
+  ): Promise<void> {
     try {
-      const user = User.fromUserCreatedEvent(userDto);
-      await this.repository.createUser(user);
       this.logger.log(
-        `User with keycloak ID ${userDto.keycloakId} created successfully with ID: ${user.id}`,
+        `Received user created event, keycloakId=${event.keycloakId}`,
+      );
+      const user = User.create(event);
+      await this.repository.create(user);
+      this.logger.log(
+        `User created successfully, id=${user.id}, keycloakId=${user.keycloakId}`,
       );
     } catch (error) {
       logError(
-        `Error creating user with keycloak ID: ${userDto.keycloakId}`,
+        `Error creating user, keycloakId=${event.keycloakId}`,
         error,
         this.logger,
       );
-      throw error;
+      await this.dlqKafkaPublisher.publish(
+        DeadLetterEvent.from(kafkaMessage, error, TraceService.getTraceId()),
+      );
     }
   }
 }

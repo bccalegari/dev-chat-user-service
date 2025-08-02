@@ -1,3 +1,5 @@
+import { KafkaEvent } from '@shared/kafka/kafka-event';
+
 export interface Value {
   id: string;
   email: string | null;
@@ -52,3 +54,16 @@ export type UserChangeEventValue = Value;
 export type UserChangeEventSource = Source;
 export type UserChangeEventBlock = Block;
 export type UserChangeEventEnvelope = Envelope;
+
+export class UserChangeEvent extends KafkaEvent {
+  private constructor(readonly envelope: UserChangeEventEnvelope) {
+    super();
+  }
+
+  static from(envelope: UserChangeEventEnvelope): UserChangeEvent {
+    if (!envelope || !envelope.before || !envelope.after || !envelope.op) {
+      throw new Error('Invalid user change event envelope');
+    }
+    return new UserChangeEvent(envelope);
+  }
+}

@@ -11,6 +11,8 @@ import {
   UserEventStrategy,
 } from '@modules/user/application/publishers/user-event.strategy';
 import { UserCreatedEventStrategy } from '@modules/user/application/publishers/user-created-event.publisher';
+import { UserUpdatedEventStrategy } from '@modules/user/application/publishers/user-updated-event.publisher';
+import { UserUpdatedListener } from '@modules/user/application/listeners/user-updated.listener';
 
 @Module({
   imports: [KafkaModule, Neo4jModule],
@@ -18,14 +20,17 @@ import { UserCreatedEventStrategy } from '@modules/user/application/publishers/u
   providers: [
     UserEventPublisher,
     UserCreatedEventStrategy,
+    UserUpdatedEventStrategy,
     {
       provide: USER_EVENT_STRATEGY,
-      useFactory: (created: UserCreatedEventStrategy): UserEventStrategy[] => [
-        created,
-      ],
-      inject: [UserCreatedEventStrategy],
+      useFactory: (
+        created: UserCreatedEventStrategy,
+        updated: UserUpdatedEventStrategy,
+      ): UserEventStrategy[] => [created, updated],
+      inject: [UserCreatedEventStrategy, UserUpdatedEventStrategy],
     },
     UserCreatedListener,
+    UserUpdatedListener,
     {
       provide: USER_REPOSITORY,
       useClass: UserNeo4jRepository,

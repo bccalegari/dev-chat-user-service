@@ -6,8 +6,8 @@ import { logError } from '@shared/logging/log-error';
 import { PROPERTIES } from '@app/app.properties';
 
 @Injectable()
-export class DlqKafkaProducer extends KafkaProducer {
-  private readonly logger = new Logger(DlqKafkaProducer.name);
+export class DeadLetterKafkaProducer extends KafkaProducer {
+  private readonly logger = new Logger(DeadLetterKafkaProducer.name);
 
   constructor(
     configService: ConfigService,
@@ -21,20 +21,23 @@ export class DlqKafkaProducer extends KafkaProducer {
   }
 
   async send<T>(topic: string, message: T): Promise<void> {
-    this.logger.log(`Sending message to DLQ topic=${topic}`);
+    this.logger.log(
+      `Sending message to dlq, topic=${topic}, message=${JSON.stringify(message)}`,
+    );
     try {
       await this.emit(
         topic,
         PROPERTIES.KAFKA.SCHEMA_REGISTRY.DLQ_SUBJECT,
         message,
       );
-      this.logger.log(`Message sent to DLQ topic=${topic}`);
+      this.logger.log(`Message sent to dlq, topic=${topic}`);
     } catch (error) {
       logError(
-        `Error sending message to DLQ topic=${topic}`,
+        `Error sending message to dlq, topic=${topic}`,
         error,
         this.logger,
       );
+      throw error;
     }
   }
 

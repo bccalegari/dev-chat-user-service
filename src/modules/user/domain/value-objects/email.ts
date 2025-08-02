@@ -1,18 +1,23 @@
 export class Email {
-  readonly value: string;
   private static readonly emailRegex =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   private static readonly maxLength = 254;
 
-  constructor(value: string) {
-    const trimmedValue = value.trim();
+  constructor(readonly value: string) {
+    const trimmed = value.trim();
+    this.validate(trimmed);
+    this.value = trimmed;
+  }
 
-    if (!trimmedValue || !Email.emailRegex.test(trimmedValue)) {
+  private validate(email: string): void {
+    if (!email) {
+      throw new Error('Email cannot be empty');
+    }
+    if (!Email.emailRegex.test(email)) {
       throw new Error('Invalid email format');
     }
-    if (trimmedValue.length > Email.maxLength) {
+    if (email.length > Email.maxLength) {
       throw new Error(`Email cannot exceed ${Email.maxLength} characters`);
     }
-    this.value = trimmedValue;
   }
 }

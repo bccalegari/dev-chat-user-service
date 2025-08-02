@@ -5,12 +5,10 @@ import {
   USER_EVENT_STRATEGY,
   UserEventStrategy,
 } from '@modules/user/application/publishers/user-event.strategy';
-import { UserChangeEventEnvelope } from '@modules/user/adapters/inbound/user-change.event';
+import { UserChangeEvent } from '@modules/user/adapters/inbound/user-change.event';
 
 @Injectable()
-export class UserEventPublisher
-  implements EventPublisher<UserChangeEventEnvelope>
-{
+export class UserEventPublisher implements EventPublisher<UserChangeEvent> {
   private readonly logger = new Logger(UserEventPublisher.name);
 
   constructor(
@@ -18,15 +16,16 @@ export class UserEventPublisher
     private readonly strategies: UserEventStrategy[],
   ) {}
 
-  async publish(event: UserChangeEventEnvelope): Promise<void> {
-    const strategy = this.strategies.find((s) => s.supports(event.op));
+  async publish(event: UserChangeEvent): Promise<void> {
+    const envelope = event.envelope;
+    const strategy = this.strategies.find((s) => s.supports(envelope.op));
 
     if (!strategy) {
-      throw new Error(`Unhandled operation: ${event.op}`);
+      throw new Error(`Unhandled operation '${envelope.op}'`);
     }
 
     try {
-      await strategy.handle(event.after);
+      await strategy.handle(envelope.after, event.kafkaMessage);
     } catch (error) {
       logError(`Error publishing user event`, error, this.logger);
       throw error;

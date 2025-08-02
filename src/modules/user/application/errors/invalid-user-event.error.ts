@@ -1,6 +1,7 @@
 export class InvalidUserEventError extends Error {
-  constructor(message?: string) {
-    super(message || 'Invalid user event data');
+  constructor(error: Error) {
+    super('Invalid user event data');
     this.name = 'InvalidUserEventError';
+    this.stack += '\nCaused by: ' + error.stack;
   }
 }

@@ -60,7 +60,9 @@ export class SchemaRegistryGateway {
         ) {
           return BigInt(n);
         }
-        throw new TypeError(`Invalid type for BigInt conversion: ${typeof n}`);
+        throw new TypeError(
+          `Invalid type for BigInt conversion, type=${typeof n}`,
+        );
       },
       toJSON: (n: bigint) => n.toString(),
       isValid: (n: unknown) => typeof n === 'bigint' || typeof n === 'number',

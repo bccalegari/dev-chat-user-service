@@ -1,10 +1,10 @@
-export class UserCreatedEvent {
+export class UserUpdatedEvent {
   constructor(
     readonly keycloakId: string,
     readonly username: string,
     readonly email: string,
     readonly name: string,
     readonly lastName: string,
-    readonly createdAt: Date,
+    readonly updatedAt: Date,
   ) {}
 }

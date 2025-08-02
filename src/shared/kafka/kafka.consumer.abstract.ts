@@ -1,13 +1,16 @@
 import { Logger } from '@nestjs/common';
 import { SchemaRegistryGateway } from '@shared/kafka/schema-registry.gateway';
-import { DlqKafkaProducer } from '@shared/kafka/dlq-kafka.producer';
+import { DeadLetterKafkaProducer } from '@shared/kafka/dead-letter-kafka.producer';
 import { EventPublisher } from '@shared/publishers/event.publisher';
 import { KafkaContext } from '@nestjs/microservices';
 import { safeStringify } from '@shared/utils/safe-stringify';
 import { logError } from '@shared/logging/log-error';
 import { Traceable } from '@shared/logging/trace.decorator';
+import { TraceService } from '@shared/logging/trace.service';
+import { KafkaMessage } from '@shared/kafka/kafka-message';
+import { KafkaEvent } from '@shared/kafka/kafka-event';
 
-export abstract class AbstractKafkaConsumer<T, U extends Record<string, any>> {
+export abstract class AbstractKafkaConsumer<T, U extends KafkaEvent> {
   private readonly _logger = new Logger(AbstractKafkaConsumer.name);
   protected abstract DLQ_TOPIC: string;
   protected shouldSkipMessage: boolean = false;
@@ -15,17 +18,13 @@ export abstract class AbstractKafkaConsumer<T, U extends Record<string, any>> {
   protected constructor(
     private readonly schemaRegistryService: SchemaRegistryGateway,
     private readonly eventPublisher: EventPublisher<U>,
-    private readonly dlqKafkaProducer: DlqKafkaProducer,
-  ) {
-    this.schemaRegistryService = schemaRegistryService;
-    this.eventPublisher = eventPublisher;
-    this.dlqKafkaProducer = dlqKafkaProducer;
-  }
+    private readonly deadLetterKafkaProducer: DeadLetterKafkaProducer,
+  ) {}
 
   @Traceable()
   protected async execute(context: KafkaContext) {
     this._logger.log(
-      `Received message on topic=${context.getTopic()}, partition=${context.getPartition()}, offset=${context.getMessage().offset}`,
+      `Received message, topic=${context.getTopic()}, partition=${context.getPartition()}, offset=${context.getMessage().offset}, headers=${JSON.stringify(context.getMessage().headers)}`,
     );
 
     const message = context.getMessage();
@@ -36,16 +35,20 @@ export abstract class AbstractKafkaConsumer<T, U extends Record<string, any>> {
       const decodedMessage: T = await this.schemaRegistryService.decode(
         message.value,
       );
-      this._logger.log(`Decoded message: ${safeStringify(decodedMessage)}`);
+      this._logger.log(
+        `Message decoded successfully, value=${safeStringify(decodedMessage)}`,
+      );
 
       const event = this.handleMessage(decodedMessage);
 
       if (this.shouldSkipMessage) {
         this._logger.log(
-          `Skipping message for topic=${context.getTopic()}, partition=${context.getPartition()}, offset=${offset}`,
+          `Skipping message, topic=${context.getTopic()}, partition=${context.getPartition()}, offset=${offset}`,
         );
         return;
       }
+
+      event.kafkaMessage = KafkaMessage.from(context);
 
       await this.eventPublisher.publish(event);
       await this.commitOffset(context, nextOffset.toString());
@@ -62,7 +65,7 @@ export abstract class AbstractKafkaConsumer<T, U extends Record<string, any>> {
 
   private resetSkipMessageFlag() {
     this.shouldSkipMessage = false;
-    this._logger.log('Resetting shouldSkipMessage flag to false');
+    this._logger.log("Resetting 'shouldSkipMessage' flag to false");
   }
 
   private async commitOffset(context: KafkaContext, offset: string) {
@@ -78,7 +81,7 @@ export abstract class AbstractKafkaConsumer<T, U extends Record<string, any>> {
         },
       ]);
       this._logger.log(
-        `Offset committed for topic=${topic}, partition=${partition}, offset=${offset}`,
+        `Offset committed, topic=${topic}, partition=${partition}, offset=${offset}`,
       );
     } catch (error) {
       logError('Error committing offset', error, this._logger);
@@ -95,8 +98,9 @@ export abstract class AbstractKafkaConsumer<T, U extends Record<string, any>> {
       originalKey: context.getMessage().key?.toString() ?? null,
       originalValue: context.getMessage().value?.toString() ?? null,
       originalHeaders: context.getMessage().headers,
-      errorMessage: error.message,
-      errorStack: error.stack,
+      traceId: TraceService.getTraceId() || 'No trace id available',
+      errorMessage: error.message || 'Unknown error',
+      errorStack: error.stack || 'No stack trace available',
       topic: topic,
       partition: partition,
       offset: offset,
@@ -104,12 +108,12 @@ export abstract class AbstractKafkaConsumer<T, U extends Record<string, any>> {
     };
 
     try {
-      await this.dlqKafkaProducer.send(this.DLQ_TOPIC, dlqPayload);
+      await this.deadLetterKafkaProducer.send(this.DLQ_TOPIC, dlqPayload);
       this._logger.log(
-        `Message sent to DLQ for topic=${topic}, partition=${partition}, offset=${offset}`,
+        `Message sent to dlq, topic=${topic}, partition=${partition}, offset=${offset}`,
       );
     } catch (dlqError) {
-      logError('Failed to send message to DLQ', dlqError, this._logger);
+      logError('Failed to send message to dlq', dlqError, this._logger);
     }
   }
 }

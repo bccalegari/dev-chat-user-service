@@ -1,6 +1,6 @@
 import { TraceService } from './trace.service';
 import { KafkaContext } from '@nestjs/microservices';
-import { randomUUID } from 'crypto';
+import { Logger } from '@nestjs/common';
 
 export function Traceable(
   traceIdExtractor?: (...args: any[]) => string | undefined,
@@ -14,10 +14,16 @@ export function Traceable(
       );
       const message = context?.getMessage();
       const traceHeader = message?.headers?.['x-trace-id'];
-      const traceId =
+      let traceId =
         traceIdExtractor?.(...args) ||
-        (traceHeader ? traceHeader.toString() : undefined) ||
-        randomUUID();
+        (traceHeader ? traceHeader.toString() : undefined);
+
+      if (!traceId) {
+        new Logger(Traceable.name).warn(
+          `No trace id found, generating a new one`,
+        );
+        traceId = TraceService.generateTraceId();
+      }
 
       return TraceService.runWithTrace(traceId, () =>
         originalMethod.apply(this, args),

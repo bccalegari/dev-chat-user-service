@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import * as neo4j from 'neo4j-driver';
 import { Driver } from 'neo4j-driver';
 import { ConfigService } from '@nestjs/config';
-import * as neo4j from 'neo4j-driver';
 import { logError } from '@shared/logging/log-error';
 
 @Injectable()
@@ -17,6 +17,20 @@ export class Neo4jGateway implements OnModuleDestroy {
         this.configService.get<string>('NEO4J_PASSWORD')!,
       ),
     );
+  }
+
+  async read(cypher: string, params: any = {}) {
+    const session = this.driver.session({
+      defaultAccessMode: neo4j.session.READ,
+    });
+    try {
+      return await session.run(cypher, params);
+    } catch (error) {
+      logError('Error executing read operation', error, this.logger);
+      throw error;
+    } finally {
+      await session.close();
+    }
   }
 
   async write(cypher: string, params: any = {}) {
