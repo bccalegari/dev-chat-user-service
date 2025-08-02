@@ -11,11 +11,11 @@ import {
 import { PROPERTIES } from '@app/app.properties';
 
 @Controller()
-export class UserCreatedKafkaConsumer extends AbstractKafkaConsumer<
+export class UserChangeKafkaConsumer extends AbstractKafkaConsumer<
   UserChangeEventEnvelope,
   UserChangeEvent
 > {
-  private readonly logger = new Logger(UserCreatedKafkaConsumer.name);
+  private readonly logger = new Logger(UserChangeKafkaConsumer.name);
   override DLQ_TOPIC: string = PROPERTIES.KAFKA.KEYCLOAK.USER_DLQ_TOPIC;
 
   constructor(

@@ -5,6 +5,7 @@ export interface UserRepository {
   findByKeycloakId(keycloakId: string): Promise<User | null>;
   create(user: User): Promise<void>;
   update(user: User): Promise<void>;
+  delete(user: User): Promise<void>;
 }
 
 export const USER_REPOSITORY = Symbol('USER_REPOSITORY');

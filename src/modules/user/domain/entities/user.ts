@@ -13,6 +13,7 @@ export class User {
     private _lastName: string,
     readonly createdAt: Date,
     private _updatedAt?: Date,
+    private _deletedAt?: Date,
   ) {
     this.validate();
   }
@@ -49,6 +50,15 @@ export class User {
     this._updatedAt = event.updatedAt;
 
     this.validate();
+  }
+
+  delete(deletedAt: Date): void {
+    if (!deletedAt || deletedAt < this.createdAt) {
+      throw new Error(
+        'Deleted date must be provided and cannot be earlier than created date',
+      );
+    }
+    this._deletedAt = deletedAt;
   }
 
   static from(props: {
@@ -91,6 +101,10 @@ export class User {
 
   get updatedAt(): Date | undefined {
     return this._updatedAt;
+  }
+
+  get deletedAt(): Date | undefined {
+    return this._deletedAt;
   }
 
   private validate(): void {

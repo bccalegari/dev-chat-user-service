@@ -2,15 +2,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { logError } from '@shared/logging/log-error';
 import { InvalidUserEventError } from '@modules/user/application/errors/invalid-user-event.error';
-import { UserEventStrategy } from '@modules/user/application/publishers/user-event.strategy';
+import { UserEventPublisherStrategy } from '@modules/user/application/publishers/user-event-publisher.strategy';
 import { UserChangeEventValue } from '@modules/user/adapters/inbound/user-change.event';
 import { PROPERTIES } from '@app/app.properties';
 import { KafkaMessage } from '@shared/kafka/kafka-message';
 import { UserUpdatedEventMapper } from '@modules/user/application/mappers/user-updated-event.mapper';
 
 @Injectable()
-export class UserUpdatedEventStrategy implements UserEventStrategy {
-  private readonly logger = new Logger(UserUpdatedEventStrategy.name);
+export class UserUpdatedEventPublisher implements UserEventPublisherStrategy {
+  private readonly logger = new Logger(UserUpdatedEventPublisher.name);
 
   constructor(private readonly eventEmitter: EventEmitter2) {}
 

@@ -3,9 +3,10 @@ import { logError } from '@shared/logging/log-error';
 import { EventPublisher } from '@shared/publishers/event.publisher';
 import {
   USER_EVENT_STRATEGY,
-  UserEventStrategy,
-} from '@modules/user/application/publishers/user-event.strategy';
+  UserEventPublisherStrategy,
+} from '@modules/user/application/publishers/user-event-publisher.strategy';
 import { UserChangeEvent } from '@modules/user/adapters/inbound/user-change.event';
+import { PROPERTIES } from '@app/app.properties';
 
 @Injectable()
 export class UserEventPublisher implements EventPublisher<UserChangeEvent> {
@@ -13,7 +14,7 @@ export class UserEventPublisher implements EventPublisher<UserChangeEvent> {
 
   constructor(
     @Inject(USER_EVENT_STRATEGY)
-    private readonly strategies: UserEventStrategy[],
+    private readonly strategies: UserEventPublisherStrategy[],
   ) {}
 
   async publish(event: UserChangeEvent): Promise<void> {
@@ -25,7 +26,13 @@ export class UserEventPublisher implements EventPublisher<UserChangeEvent> {
     }
 
     try {
-      await strategy.handle(envelope.after, event.kafkaMessage);
+      let envelopeValue = envelope.after;
+
+      if (envelope.op === PROPERTIES.USER.EVENTS.DELETE.OPERATION) {
+        envelopeValue = envelope.before;
+      }
+
+      await strategy.handle(envelopeValue, event.kafkaMessage);
     } catch (error) {
       logError(`Error publishing user event`, error, this.logger);
       throw error;

@@ -61,7 +61,7 @@ export class UserChangeEvent extends KafkaEvent {
   }
 
   static from(envelope: UserChangeEventEnvelope): UserChangeEvent {
-    if (!envelope || !envelope.before || !envelope.after || !envelope.op) {
+    if (!envelope) {
       throw new Error('Invalid user change event envelope');
     }
     return new UserChangeEvent(envelope);

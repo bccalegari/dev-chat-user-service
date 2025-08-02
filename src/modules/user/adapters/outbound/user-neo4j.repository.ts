@@ -112,6 +112,24 @@ export class UserNeo4jRepository implements UserRepository {
     }
   }
 
+  async delete(user: User): Promise<void> {
+    try {
+      const query = `
+        MATCH (u:User {id: $id})
+        SET u.deleted_at = $deletedAt
+      `;
+      const params = { id: user.id, deletedAt: user.deletedAt!.toISOString() };
+      await this.gateway.write(query, params);
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete user in Neo4j`,
+        error.message,
+        error.stack,
+      );
+      throw error;
+    }
+  }
+
   private async find(
     query: string,
     params: Record<string, any>,
