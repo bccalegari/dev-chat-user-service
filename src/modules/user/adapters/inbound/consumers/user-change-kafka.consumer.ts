@@ -7,7 +7,7 @@ import { AbstractKafkaConsumer } from '@shared/kafka/kafka.consumer.abstract';
 import {
   UserChangeEvent,
   UserChangeEventEnvelope,
-} from '@modules/user/adapters/inbound/user-change.event';
+} from '@modules/user/adapters/inbound/consumers/user-change.event';
 import { PROPERTIES } from '@app/app.properties';
 
 @Controller()

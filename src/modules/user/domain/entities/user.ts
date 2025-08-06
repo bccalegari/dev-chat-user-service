@@ -107,6 +107,10 @@ export class User {
     return this._deletedAt;
   }
 
+  get fullName(): string {
+    return `${this._name} ${this._lastName}`;
+  }
+
   private validate(): void {
     if (!this.id.trim()) throw new Error('User ID is required');
     if (!this.keycloakId.trim()) throw new Error('Keycloak ID is required');

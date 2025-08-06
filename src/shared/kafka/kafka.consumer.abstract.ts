@@ -5,8 +5,8 @@ import { EventPublisher } from '@shared/publishers/event.publisher';
 import { KafkaContext } from '@nestjs/microservices';
 import { safeStringify } from '@shared/utils/safe-stringify';
 import { logError } from '@shared/logging/log-error';
-import { Traceable } from '@shared/logging/trace.decorator';
-import { TraceService } from '@shared/logging/trace.service';
+import { Traceable } from '@shared/tracing/trace.decorator';
+import { TraceService } from '@shared/tracing/trace.service';
 import { KafkaMessage } from '@shared/kafka/kafka-message';
 import { KafkaEvent } from '@shared/kafka/kafka-event';
 

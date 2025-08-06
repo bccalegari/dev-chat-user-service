@@ -5,7 +5,7 @@ import {
   USER_EVENT_STRATEGY,
   UserEventPublisherStrategy,
 } from '@modules/user/application/publishers/user-event-publisher.strategy';
-import { UserChangeEvent } from '@modules/user/adapters/inbound/user-change.event';
+import { UserChangeEvent } from '@modules/user/adapters/inbound/consumers/user-change.event';
 import { PROPERTIES } from '@app/app.properties';
 
 @Injectable()

@@ -1,0 +1,15 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserDto {
+  id: String!
+  username: String!
+  email: String!
+  name: String!
+}
+
+type Query {
+  """Get user by id"""
+  user(id: String!): UserDto
+}

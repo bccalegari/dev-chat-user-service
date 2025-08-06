@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { logError } from '@shared/logging/log-error';
-import { InvalidUserEventError } from '@modules/user/application/errors/invalid-user-event.error';
-import { UserChangeEventValue } from '@modules/user/adapters/inbound/user-change.event';
+import { InvalidUserEventError } from '@modules/user/application/exceptions/invalid-user-event.error';
+import { UserChangeEventValue } from '@modules/user/adapters/inbound/consumers/user-change.event';
 import { PROPERTIES } from '@app/app.properties';
 import { KafkaMessage } from '@shared/kafka/kafka-message';
 import { UserEventPublisherStrategy } from '@modules/user/application/publishers/user-event-publisher.strategy';

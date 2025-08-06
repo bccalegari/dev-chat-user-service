@@ -1,6 +1,6 @@
 import { format, transports } from 'winston';
 import { WinstonModule } from 'nest-winston';
-import { TraceService } from '@shared/logging/trace.service';
+import { TraceService } from '@shared/tracing/trace.service';
 
 export const LoggerFactory = (serviceName: string) => {
   return WinstonModule.createLogger({

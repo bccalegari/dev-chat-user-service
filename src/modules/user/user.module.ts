@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { KafkaModule } from '@shared/kafka/kafka.module';
 import { Neo4jModule } from '@shared/neo4j/neo4j.module';
-import { UserChangeKafkaConsumer } from '@modules/user/adapters/inbound/user-change-kafka.consumer';
+import { UserChangeKafkaConsumer } from '@modules/user/adapters/inbound/consumers/user-change-kafka.consumer';
 import { UserEventPublisher } from '@modules/user/application/publishers/user-event.publisher';
 import { UserCreatedListener } from '@modules/user/application/listeners/user-created.listener';
 import { USER_REPOSITORY } from '@modules/user/domain/repositories/user.repository.interface';
-import { UserNeo4jRepository } from '@modules/user/adapters/outbound/user-neo4j.repository';
+import { UserNeo4jRepository } from '@modules/user/adapters/outbound/repositories/user-neo4j.repository';
 import {
   USER_EVENT_STRATEGY,
   UserEventPublisherStrategy,
@@ -15,6 +15,8 @@ import { UserDeletedListener } from '@modules/user/application/listeners/user-de
 import { UserCreatedEventPublisher } from '@modules/user/application/publishers/user-created-event.publisher';
 import { UserUpdatedEventPublisher } from '@modules/user/application/publishers/user-updated-event.publisher';
 import { UserDeletedEventPublisher } from '@modules/user/application/publishers/user-deleted-event.publisher';
+import { UserResolver } from '@modules/user/adapters/inbound/resolvers/user.resolver';
+import { GetUserByIdUseCase } from '@modules/user/application/usecases/get-user-by-id.usecase';
 
 @Module({
   imports: [KafkaModule, Neo4jModule],
@@ -44,6 +46,8 @@ import { UserDeletedEventPublisher } from '@modules/user/application/publishers/
       provide: USER_REPOSITORY,
       useClass: UserNeo4jRepository,
     },
+    UserResolver,
+    GetUserByIdUseCase,
   ],
 })
 export class UserModule {}

@@ -9,7 +9,7 @@ import { User } from '@modules/user/domain/entities/user';
 import { logError } from '@shared/logging/log-error';
 import { KafkaMessage } from '@shared/kafka/kafka-message';
 import { DeadLetterKafkaPublisher } from '@shared/kafka/dead-letter-kafka-publisher';
-import { TraceService } from '@shared/logging/trace.service';
+import { TraceService } from '@shared/tracing/trace.service';
 import { DeadLetterEvent } from '@shared/kafka/dead-letter.event';
 import { PROPERTIES } from '@app/app.properties';
 

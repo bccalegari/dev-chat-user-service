@@ -1,4 +1,4 @@
-import { UserChangeEventValue } from '@modules/user/adapters/inbound/user-change.event';
+import { UserChangeEventValue } from '@modules/user/adapters/inbound/consumers/user-change.event';
 import { UserDeletedEvent } from '@modules/user/domain/events/user-deleted.event';
 
 export class UserDeletedEventMapper {
