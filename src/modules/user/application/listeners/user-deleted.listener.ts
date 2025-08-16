@@ -13,6 +13,10 @@ import { KafkaMessage } from '@shared/kafka/kafka-message';
 import { DeadLetterKafkaPublisher } from '@shared/kafka/dead-letter-kafka-publisher';
 import { PROPERTIES } from '@app/app.properties';
 import { UserDeletedEvent } from '@modules/user/domain/events/user-deleted.event';
+import {
+  PROFILE_REPOSITORY,
+  ProfileRepository,
+} from '@modules/profile/domain/repositories/profile.repository.interface';
 
 @Injectable()
 export class UserDeletedListener {
@@ -20,6 +24,8 @@ export class UserDeletedListener {
 
   constructor(
     @Inject(USER_REPOSITORY) private readonly repository: UserRepository,
+    @Inject(PROFILE_REPOSITORY)
+    private readonly profileRepository: ProfileRepository,
     private readonly deadLetterKafkaPublisher: DeadLetterKafkaPublisher,
   ) {}
 
@@ -35,6 +41,7 @@ export class UserDeletedListener {
       const user = await this.findByKeycloakId(event.keycloakId);
       user.delete(event.deletedAt);
       await this.repository.delete(user);
+      await this.deleteProfile(user.id);
       this.logger.log(
         `User deleted successfully, id=${user.id}, keycloakId=${user.keycloakId}`,
       );
@@ -56,5 +63,14 @@ export class UserDeletedListener {
       throw new UserNotFoundException();
     }
     return user;
+  }
+
+  private async deleteProfile(userId: string): Promise<void> {
+    const profile = await this.profileRepository.findByUserId(userId);
+    if (profile) {
+      profile.delete();
+      await this.profileRepository.delete(profile);
+      this.logger.log(`Profile deleted successfully, id=${profile.id}`);
+    }
   }
 }

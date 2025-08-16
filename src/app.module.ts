@@ -9,6 +9,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { GraphQLExceptionFilter } from '@shared/graphql/graphql-exception.filter';
 import { TraceInterceptor } from '@shared/tracing/trace.interceptor';
 import { TraceIdMiddleware } from '@shared/tracing/trace.middleware';
+import { ProfileModule } from '@modules/profile/profile.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TraceIdMiddleware } from '@shared/tracing/trace.middleware';
       },
     }),
     UserModule,
+    ProfileModule,
   ],
   controllers: [],
   providers: [

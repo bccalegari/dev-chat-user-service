@@ -1,4 +1,5 @@
 import { User } from '@modules/user/domain/entities/user';
+import { GetUserDto } from '@modules/user/adapters/outbound/dto/get-user-dto';
 
 export class UserMapper {
   static fromNeo4j(props: {
@@ -18,8 +19,19 @@ export class UserMapper {
       email: props.email,
       name: props.name,
       lastName: props.last_name,
-      createdAt: props.created_at,
-      updatedAt: props.updated_at,
+      createdAt: new Date(props.created_at),
+      updatedAt: props.updated_at ? new Date(props.updated_at) : undefined,
     });
+  }
+
+  static toGetUserDto(user: User): GetUserDto {
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      name: user.fullName,
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt?.toISOString(),
+    };
   }
 }

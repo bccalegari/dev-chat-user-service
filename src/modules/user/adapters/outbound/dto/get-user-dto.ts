@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class UserDto {
+export class GetUserDto {
   @Field()
   id: string;
 
@@ -13,4 +13,10 @@ export class UserDto {
 
   @Field()
   name: string;
+
+  @Field()
+  createdAt: string;
+
+  @Field({ nullable: true })
+  updatedAt?: string;
 }

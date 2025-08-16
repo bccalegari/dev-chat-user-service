@@ -4,8 +4,8 @@ import {
   UserRepository,
 } from '@modules/user/domain/repositories/user.repository.interface';
 import { UserNotFoundException } from '@modules/user/application/exceptions/user-not-found.exception';
-import { UserDto } from '@modules/user/adapters/outbound/dto/user.dto';
-import { UserDtoMapper } from '@modules/user/application/mappers/user-dto.mapper';
+import { GetUserDto } from '@modules/user/adapters/outbound/dto/get-user-dto';
+import { UserMapper } from '@modules/user/application/mappers/user.mapper';
 
 @Injectable()
 export class GetUserByIdUseCase {
@@ -15,7 +15,7 @@ export class GetUserByIdUseCase {
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository,
   ) {}
 
-  async execute(id: string): Promise<UserDto | null> {
+  async execute(id: string): Promise<GetUserDto | null> {
     try {
       this.logger.log(`Getting user by id, id=${id}`);
       return await this.getUserById(id);
@@ -29,13 +29,13 @@ export class GetUserByIdUseCase {
     }
   }
 
-  private async getUserById(id: string): Promise<UserDto | null> {
+  private async getUserById(id: string): Promise<GetUserDto | null> {
     const user = await this.userRepository.findById(id);
 
     if (!user) {
       throw new UserNotFoundException();
     }
 
-    return UserDtoMapper.from(user);
+    return UserMapper.toGetUserDto(user);
   }
 }

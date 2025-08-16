@@ -14,6 +14,7 @@ export class UserNeo4jRepository implements UserRepository {
     try {
       const query = `
         MATCH (u:User {id: $id})
+        WHERE u.deleted_at IS NULL
         RETURN u
       `;
       const params = { id };
@@ -32,6 +33,7 @@ export class UserNeo4jRepository implements UserRepository {
     try {
       const query = `
         MATCH (u:User {keycloak_id: $keycloakId})
+        WHERE u.deleted_at IS NULL
         RETURN u
       `;
       const params = { keycloakId };
@@ -85,6 +87,7 @@ export class UserNeo4jRepository implements UserRepository {
     try {
       const query = `
         MATCH (u:User {id: $id})
+        WHERE u.deleted_at IS NULL
         SET u.username = $username,
             u.email = $email,
             u.name = $name,
@@ -116,6 +119,7 @@ export class UserNeo4jRepository implements UserRepository {
     try {
       const query = `
         MATCH (u:User {id: $id})
+        WHERE u.deleted_at IS NULL
         SET u.deleted_at = $deletedAt
       `;
       const params = { id: user.id, deletedAt: user.deletedAt!.toISOString() };

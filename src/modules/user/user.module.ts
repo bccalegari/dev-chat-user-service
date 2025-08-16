@@ -17,6 +17,8 @@ import { UserUpdatedEventPublisher } from '@modules/user/application/publishers/
 import { UserDeletedEventPublisher } from '@modules/user/application/publishers/user-deleted-event.publisher';
 import { UserResolver } from '@modules/user/adapters/inbound/resolvers/user.resolver';
 import { GetUserByIdUseCase } from '@modules/user/application/usecases/get-user-by-id.usecase';
+import { PROFILE_REPOSITORY } from '@modules/profile/domain/repositories/profile.repository.interface';
+import { ProfileNeo4jRepository } from '@modules/profile/adapters/outbound/profile-neo4j.repository';
 
 @Module({
   imports: [KafkaModule, Neo4jModule],
@@ -45,6 +47,10 @@ import { GetUserByIdUseCase } from '@modules/user/application/usecases/get-user-
     {
       provide: USER_REPOSITORY,
       useClass: UserNeo4jRepository,
+    },
+    {
+      provide: PROFILE_REPOSITORY,
+      useClass: ProfileNeo4jRepository,
     },
     UserResolver,
     GetUserByIdUseCase,
