@@ -6,6 +6,12 @@ export class UpdateProfileDto {
   readonly id: string;
 
   @Field({ nullable: true })
+  readonly username?: string;
+
+  @Field({ nullable: true })
+  readonly birthDate?: string;
+
+  @Field({ nullable: true })
   readonly bio?: string;
 
   @Field({ nullable: true })

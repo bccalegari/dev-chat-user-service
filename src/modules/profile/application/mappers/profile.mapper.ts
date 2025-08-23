@@ -5,8 +5,10 @@ import { GetProfileDto } from '@modules/profile/adapters/outbound/dto/get-profil
 export class ProfileMapper {
   static fromNeo4j(props: {
     id: string;
+    username: string;
     bio?: string;
     avatar_url?: string;
+    birth_date: string;
     user_id: string;
     created_at: Date;
     updated_at?: Date;
@@ -14,6 +16,8 @@ export class ProfileMapper {
   }): Profile {
     return Profile.from({
       id: props.id,
+      username: props.username,
+      birthDate: new Date(props.birth_date),
       bio: props.bio,
       avatarUrl: props.avatar_url,
       userId: props.user_id,
@@ -25,6 +29,8 @@ export class ProfileMapper {
   static fromCreateProfileDto(dto: CreateProfileDto) {
     return Profile.create({
       userId: dto.userId,
+      username: dto.username,
+      birthDate: new Date(dto.birthDate),
       bio: dto.bio,
       avatarUrl: dto.avatarUrl,
     });
@@ -33,6 +39,8 @@ export class ProfileMapper {
   static toGetProfileDto(profile: Profile) {
     return {
       id: profile.id,
+      username: profile.username,
+      birthDate: profile.birthDateString,
       bio: profile.bio,
       avatarUrl: profile.avatarUrl,
       userId: profile.userId,

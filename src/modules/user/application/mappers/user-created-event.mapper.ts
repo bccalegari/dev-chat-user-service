@@ -6,7 +6,6 @@ export class UserCreatedEventMapper {
     if (!event) throw new Error('Invalid user event');
     return new UserCreatedEvent(
       event.id,
-      event.username!,
       event.email!,
       event.first_name!,
       event.last_name!,

@@ -7,7 +7,6 @@ export class User {
   private constructor(
     readonly id: string,
     readonly keycloakId: string,
-    private _username: string,
     private _email: Email,
     private _name: string,
     private _lastName: string,
@@ -22,7 +21,6 @@ export class User {
     return new User(
       randomUUID(),
       event.keycloakId,
-      event.username,
       new Email(event.email),
       event.name,
       event.lastName,
@@ -31,10 +29,6 @@ export class User {
   }
 
   update(event: UserUpdatedEvent): void {
-    if (event.username && event.username !== this._username) {
-      this._username = event.username;
-    }
-
     if (event.email && event.email !== this._email.value) {
       this._email = new Email(event.email);
     }
@@ -64,7 +58,6 @@ export class User {
   static from(props: {
     id: string;
     keycloakId: string;
-    username: string;
     email: string;
     name: string;
     lastName: string;
@@ -74,17 +67,12 @@ export class User {
     return new User(
       props.id,
       props.keycloakId,
-      props.username,
       new Email(props.email),
       props.name,
       props.lastName,
       props.createdAt,
       props.updatedAt,
     );
-  }
-
-  get username(): string {
-    return this._username;
   }
 
   get email(): string {
@@ -115,7 +103,6 @@ export class User {
     if (!this.id.trim()) throw new Error('User ID is required');
     if (!this.keycloakId.trim()) throw new Error('Keycloak ID is required');
     if (!this._email) throw new Error('Email is required');
-    if (!this._username.trim()) throw new Error('Username is required');
     if (!this._name.trim()) throw new Error('Name is required');
     if (!this._lastName.trim()) throw new Error('Last name is required');
     if (this._updatedAt && this._updatedAt < this.createdAt)

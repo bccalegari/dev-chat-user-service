@@ -5,7 +5,6 @@ export class UserMapper {
   static fromNeo4j(props: {
     id: string;
     keycloak_id: string;
-    username: string;
     email: string;
     name: string;
     last_name: string;
@@ -15,7 +14,6 @@ export class UserMapper {
     return User.from({
       id: props.id,
       keycloakId: props.keycloak_id,
-      username: props.username,
       email: props.email,
       name: props.name,
       lastName: props.last_name,
@@ -27,7 +25,6 @@ export class UserMapper {
   static toGetUserDto(user: User): GetUserDto {
     return {
       id: user.id,
-      username: user.username,
       email: user.email,
       name: user.fullName,
       createdAt: user.createdAt.toISOString(),

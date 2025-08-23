@@ -5,6 +5,12 @@ export class GetProfileDto {
   @Field()
   readonly id: string;
 
+  @Field()
+  readonly username: string;
+
+  @Field()
+  readonly birthDate: string;
+
   @Field({ nullable: true })
   readonly bio?: string;
 

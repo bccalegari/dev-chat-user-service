@@ -29,11 +29,15 @@ export class UserNeo4jRepository implements UserRepository {
     }
   }
 
-  async findByKeycloakId(keycloakId: string): Promise<User | null> {
+  async findByKeycloakId(
+    keycloakId: string,
+    soft: boolean = true,
+  ): Promise<User | null> {
     try {
+      const deletedAtCondition = soft ? 'WHERE u.deleted_at IS NULL' : '';
       const query = `
         MATCH (u:User {keycloak_id: $keycloakId})
-        WHERE u.deleted_at IS NULL
+        ${deletedAtCondition}
         RETURN u
       `;
       const params = { keycloakId };
@@ -54,7 +58,6 @@ export class UserNeo4jRepository implements UserRepository {
         CREATE (u:User {
           id: $id,
           keycloak_id: $keycloakId,
-          username: $username,
           email: $email,
           name: $name,
           last_name: $lastName,
@@ -65,7 +68,6 @@ export class UserNeo4jRepository implements UserRepository {
       const params = {
         id: user.id,
         keycloakId: user.keycloakId,
-        username: user.username,
         email: user.email,
         name: user.name,
         lastName: user.lastName,
@@ -88,8 +90,7 @@ export class UserNeo4jRepository implements UserRepository {
       const query = `
         MATCH (u:User {id: $id})
         WHERE u.deleted_at IS NULL
-        SET u.username = $username,
-            u.email = $email,
+        SET u.email = $email,
             u.name = $name,
             u.last_name = $lastName,
             u.updated_at = $updatedAt
@@ -97,7 +98,6 @@ export class UserNeo4jRepository implements UserRepository {
 
       const params = {
         id: user.id,
-        username: user.username,
         email: user.email,
         name: user.name,
         lastName: user.lastName,

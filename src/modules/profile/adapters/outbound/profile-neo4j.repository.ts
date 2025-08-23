@@ -17,7 +17,8 @@ export class ProfileNeo4jRepository implements ProfileRepository {
         WHERE p.deleted_at IS NULL
         RETURN p
       `;
-      return this.find(query, { id });
+      const params = { id };
+      return this.find(query, params);
     } catch (error) {
       this.logger.error(
         `Failed to find profile by id in Neo4j`,
@@ -28,17 +29,45 @@ export class ProfileNeo4jRepository implements ProfileRepository {
     }
   }
 
-  async findByUserId(userId: string): Promise<Profile | null> {
+  async findByUserId(
+    userId: string,
+    soft: boolean = true,
+  ): Promise<Profile | null> {
     try {
+      const deletedAtCondition = soft
+        ? 'WHERE u.deleted_at IS NULL AND p.deleted_at IS NULL'
+        : '';
       const query = `
         MATCH (u:User {id: $userId})-[:HAS_PROFILE]->(p:Profile)
-        WHERE u.deleted_at IS NULL AND p.deleted_at IS NULL
+        ${deletedAtCondition}
         RETURN p
       `;
-      return this.find(query, { userId });
+      const params = { userId };
+      return this.find(query, params);
     } catch (error) {
       this.logger.error(
         `Failed to find profile by userId in Neo4j`,
+        error.message,
+        error.stack,
+      );
+      throw error;
+    }
+  }
+
+  async existsByUsername(username: string): Promise<boolean> {
+    try {
+      const query = `
+        MATCH (p:Profile {username: $username})
+        WHERE p.deleted_at IS NULL
+        RETURN COUNT(p) AS count
+      `;
+      const params = { username };
+      const result = await this.gateway.read(query, params);
+      const count = result.records[0].get('count').toInt();
+      return count > 0;
+    } catch (error) {
+      this.logger.error(
+        `Failed to check existence of profile by username in Neo4j`,
         error.message,
         error.stack,
       );
@@ -53,6 +82,8 @@ export class ProfileNeo4jRepository implements ProfileRepository {
         WHERE u.deleted_at IS NULL
         CREATE (p:Profile {
           id: $id,
+          username: $username,
+          birth_date: $birthDate,
           bio: $bio,
           avatar_url: $avatarUrl,
           user_id: $userId,
@@ -63,6 +94,8 @@ export class ProfileNeo4jRepository implements ProfileRepository {
 
       const params = {
         id: profile.id,
+        username: profile.username,
+        birthDate: profile.birthDateString,
         bio: profile.bio,
         avatarUrl: profile.avatarUrl,
         userId: profile.userId,
@@ -85,13 +118,17 @@ export class ProfileNeo4jRepository implements ProfileRepository {
       const query = `
         MATCH (p: Profile {id: $id})
         WHERE p.deleted_at IS NULL
-        SET p.bio = $bio,
+        SET p.username = $username,
+            p.birth_date = $birthDate,
+            p.bio = $bio,
             p.avatar_url = $avatarUrl,
             p.updated_at = $updatedAt
       `;
 
       const params = {
         id: profile.id,
+        username: profile.username,
+        birthDate: profile.birthDateString,
         bio: profile.bio,
         avatarUrl: profile.avatarUrl,
         updatedAt: profile.updatedAt!.toISOString(),

@@ -8,6 +8,7 @@ import { ProfileNotFoundException } from '@modules/profile/application/exception
 import { Profile } from '@modules/profile/domain/entities/profile';
 import { ProfileMapper } from '@modules/profile/application/mappers/profile.mapper';
 import { UpdateProfileDto } from '@modules/profile/adapters/inbound/dto/update-profile.dto';
+import { ProfileAlreadyExistsException } from '@modules/profile/application/exceptions/profile-already-exists.exception';
 
 @Injectable()
 export class UpdateProfileUsecase {
@@ -22,7 +23,17 @@ export class UpdateProfileUsecase {
     try {
       this.logger.log(`Deleting profile by id, profileId=${dto.id}`);
       const profile = await this.getProfileById(dto.id);
-      profile.update({ bio: dto.bio, avatarUrl: dto.avatarUrl });
+
+      if (dto.username && dto.username !== profile.username) {
+        await this.existsProfileByUsername(dto.username);
+      }
+
+      profile.update({
+        username: dto.username ?? profile.username,
+        birthDate: dto.birthDate ? new Date(dto.birthDate) : profile.birthDate,
+        bio: dto.bio,
+        avatarUrl: dto.avatarUrl,
+      });
       await this.profileRepository.update(profile);
       return ProfileMapper.toGetProfileDto(profile);
     } catch (error) {
@@ -41,5 +52,12 @@ export class UpdateProfileUsecase {
       throw new ProfileNotFoundException();
     }
     return profile;
+  }
+
+  private async existsProfileByUsername(username: string): Promise<void> {
+    const exists = await this.profileRepository.existsByUsername(username);
+    if (exists) {
+      throw new ProfileAlreadyExistsException();
+    }
   }
 }
