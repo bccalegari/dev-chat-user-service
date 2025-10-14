@@ -2,15 +2,43 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type GetUserDto {
+type GetProfileDto {
   id: String!
-  email: String!
-  name: String!
+  username: String!
+  birthDate: String!
+  bio: String
+  avatarUrl: String
+  userId: String!
   createdAt: String!
   updatedAt: String
+  deletedAt: String
 }
 
 type Query {
-  """Get user by id"""
-  getUser(id: String!): GetUserDto
+  """Get profile by user id"""
+  getProfile(userId: String!): GetProfileDto
+}
+
+type Mutation {
+  """Create a new profile"""
+  createProfile(createProfileDto: CreateProfileDto!): GetProfileDto!
+
+  """Update profile by id"""
+  updateProfile(updateProfileDto: UpdateProfileDto!): GetProfileDto!
+}
+
+input CreateProfileDto {
+  userId: String!
+  username: String!
+  birthDate: String!
+  bio: String
+  avatarUrl: String
+}
+
+input UpdateProfileDto {
+  id: String!
+  username: String
+  birthDate: String
+  bio: String
+  avatarUrl: String
 }

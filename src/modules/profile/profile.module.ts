@@ -6,7 +6,6 @@ import { ProfileNeo4jRepository } from '@modules/profile/adapters/outbound/profi
 import { CreateProfileUsecase } from '@modules/profile/application/usecases/create-profile.usecase';
 import { GetProfileByUserIdUsecase } from '@modules/profile/application/usecases/get-profile-by-user-id.usecase';
 import { UpdateProfileUsecase } from '@modules/profile/application/usecases/update-profile.usecase';
-import { DeleteProfileUsecase } from '@modules/profile/application/usecases/delete-profile.usecase';
 import { USER_REPOSITORY } from '@modules/user/domain/repositories/user.repository.interface';
 import { UserNeo4jRepository } from '@modules/user/adapters/outbound/repositories/user-neo4j.repository';
 import { ProfileDeletedListener } from '@modules/profile/application/listeners/profile-deleted.listener';
@@ -18,7 +17,6 @@ import { ProfileDeletedListener } from '@modules/profile/application/listeners/p
     CreateProfileUsecase,
     GetProfileByUserIdUsecase,
     UpdateProfileUsecase,
-    DeleteProfileUsecase,
     ProfileDeletedListener,
     {
       provide: USER_REPOSITORY,

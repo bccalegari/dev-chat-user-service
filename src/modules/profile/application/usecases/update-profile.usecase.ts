@@ -21,7 +21,7 @@ export class UpdateProfileUsecase {
 
   async execute(dto: UpdateProfileDto): Promise<GetProfileDto> {
     try {
-      this.logger.log(`Deleting profile by id, profileId=${dto.id}`);
+      this.logger.log(`Updating profile by id, profileId=${dto.id}`);
       const profile = await this.getProfileById(dto.id);
 
       if (dto.username && dto.username !== profile.username) {
@@ -38,7 +38,7 @@ export class UpdateProfileUsecase {
       return ProfileMapper.toGetProfileDto(profile);
     } catch (error) {
       this.logger.error(
-        `Failed to delete profile by id, profileId=${dto.id}`,
+        `Failed to update profile by id, profileId=${dto.id}`,
         error.message,
         error.stack,
       );

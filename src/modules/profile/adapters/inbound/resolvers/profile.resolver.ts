@@ -7,7 +7,6 @@ import { GraphQLResolveInfo } from 'graphql/type';
 import { GetProfileByUserIdUsecase } from '@modules/profile/application/usecases/get-profile-by-user-id.usecase';
 import { UpdateProfileDto } from '@modules/profile/adapters/inbound/dto/update-profile.dto';
 import { UpdateProfileUsecase } from '@modules/profile/application/usecases/update-profile.usecase';
-import { DeleteProfileUsecase } from '@modules/profile/application/usecases/delete-profile.usecase';
 
 @Resolver()
 export class ProfileResolver {
@@ -17,12 +16,11 @@ export class ProfileResolver {
     private readonly createProfileUseCase: CreateProfileUsecase,
     private readonly getProfileByUserIdUseCase: GetProfileByUserIdUsecase,
     private readonly updateProfileUseCase: UpdateProfileUsecase,
-    private readonly deleteProfileUseCase: DeleteProfileUsecase,
   ) {}
 
   @Mutation(() => GetProfileDto, { description: 'Create a new profile' })
   async createProfile(
-    @Args('CreateProfileDto') dto: CreateProfileDto,
+    @Args('createProfileDto') dto: CreateProfileDto,
     @Info() info: GraphQLResolveInfo,
   ): Promise<CreateProfileDto> {
     const requestedFields = info.fieldNodes[0].selectionSet?.selections.map(
@@ -61,7 +59,7 @@ export class ProfileResolver {
 
   @Mutation(() => GetProfileDto, { description: 'Update profile by id' })
   async updateProfile(
-    @Args('UpdateProfileDto') dto: UpdateProfileDto,
+    @Args('updateProfileDto') dto: UpdateProfileDto,
     @Info() info: GraphQLResolveInfo,
   ): Promise<GetProfileDto> {
     const requestedFields = info.fieldNodes[0].selectionSet?.selections.map(
@@ -73,24 +71,6 @@ export class ProfileResolver {
     const profile = await this.updateProfileUseCase.execute(dto);
     this.logger.log(
       `Profile updated successfully, response=${JSON.stringify(profile)}`,
-    );
-    return profile;
-  }
-
-  @Mutation(() => GetProfileDto, { description: 'Delete profile by id' })
-  async deleteProfile(
-    @Args('profileId') profileId: string,
-    @Info() info: GraphQLResolveInfo,
-  ): Promise<GetProfileDto> {
-    const requestedFields = info.fieldNodes[0].selectionSet?.selections.map(
-      (s: any) => s.name.value,
-    );
-    this.logger.log(
-      `Deleting profile by id, profileId=${profileId}, requestedFields=${JSON.stringify(requestedFields)}`,
-    );
-    const profile = await this.deleteProfileUseCase.execute(profileId);
-    this.logger.log(
-      `Profile deleted successfully, response=${JSON.stringify(profile)}`,
     );
     return profile;
   }
