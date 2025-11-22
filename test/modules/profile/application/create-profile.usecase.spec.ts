@@ -16,7 +16,7 @@ import { UserNotFoundException } from '@modules/user/application/exceptions/user
 import { CreateProfileDto } from '@modules/profile/adapters/inbound/dto/create-profile.dto';
 import { User } from '@modules/user/domain/entities/user';
 
-describe('CreateProfileUsecase Unit Tests', () => {
+describe('CreateProfileUsecase Tests', () => {
   let module: TestingModule;
   let useCase: CreateProfileUsecase;
   let profileRepository: ProfileRepository;
@@ -58,7 +58,6 @@ describe('CreateProfileUsecase Unit Tests', () => {
       username: 'johndoe',
       birthDate: '1990-01-01',
       bio: 'Hello, I am John Doe',
-      avatarUrl: 'http://example.com/avatar.jpg',
     };
 
     const mockProfile = {
@@ -66,7 +65,6 @@ describe('CreateProfileUsecase Unit Tests', () => {
       username: dto.username,
       birthDate: new Date('1990-01-01'),
       bio: dto.bio,
-      avatarUrl: dto.avatarUrl,
       birthDateString: '1990-01-01',
     } as Profile;
 
@@ -81,7 +79,6 @@ describe('CreateProfileUsecase Unit Tests', () => {
       username: dto.username,
       birthDate: mockProfile.birthDateString,
       bio: dto.bio,
-      avatarUrl: dto.avatarUrl,
       userId: dto.userId,
       createdAt: expect.any(String),
       updatedAt: undefined,
@@ -99,7 +96,6 @@ describe('CreateProfileUsecase Unit Tests', () => {
       username: 'johndoe',
       birthDate: '1990-01-01',
       bio: 'Hello, I am John Doe',
-      avatarUrl: 'http://example.com/avatar.jpg',
     };
 
     await expect(useCase.execute(dto)).rejects.toThrow(UserNotFoundException);
@@ -113,7 +109,6 @@ describe('CreateProfileUsecase Unit Tests', () => {
       username: 'johndoe',
       birthDate: new Date('1990-01-01'),
       bio: 'Hello, I am John Doe',
-      avatarUrl: 'http://example.com/avatar.jpg',
       createdAt: new Date(),
       updatedAt: new Date(),
     } as Profile;
@@ -127,7 +122,6 @@ describe('CreateProfileUsecase Unit Tests', () => {
       username: 'johndoe',
       birthDate: '1990-01-01',
       bio: 'Hello, I am John Doe',
-      avatarUrl: 'http://example.com/avatar.jpg',
     };
 
     await expect(useCase.execute(dto)).rejects.toThrow(

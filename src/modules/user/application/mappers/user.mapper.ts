@@ -4,7 +4,6 @@ import { GetUserDto } from '@modules/user/adapters/outbound/dto/get-user-dto';
 export class UserMapper {
   static fromNeo4j(props: {
     id: string;
-    keycloak_id: string;
     email: string;
     name: string;
     last_name: string;
@@ -13,7 +12,6 @@ export class UserMapper {
   }): User {
     return User.from({
       id: props.id,
-      keycloakId: props.keycloak_id,
       email: props.email,
       name: props.name,
       lastName: props.last_name,

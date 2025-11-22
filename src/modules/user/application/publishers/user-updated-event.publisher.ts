@@ -25,7 +25,7 @@ export class UserUpdatedEventPublisher implements UserEventPublisherStrategy {
     try {
       const userUpdatedEvent = UserUpdatedEventMapper.from(event);
       this.logger.log(
-        `Publishing user updated event, keycloakId=${userUpdatedEvent.keycloakId}`,
+        `Publishing user updated event, id=${userUpdatedEvent.userId}`,
       );
       await this.eventEmitter.emitAsync(
         PROPERTIES.USER.EVENTS.UPDATE.NAME,

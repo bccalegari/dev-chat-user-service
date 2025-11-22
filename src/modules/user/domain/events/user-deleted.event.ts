@@ -1,6 +1,6 @@
 export class UserDeletedEvent {
   constructor(
-    readonly keycloakId: string,
+    readonly userId: string,
     readonly deletedAt: Date,
   ) {}
 }

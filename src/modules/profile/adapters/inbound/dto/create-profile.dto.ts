@@ -13,7 +13,4 @@ export class CreateProfileDto {
 
   @Field({ nullable: true })
   readonly bio?: string;
-
-  @Field({ nullable: true })
-  readonly avatarUrl?: string;
 }

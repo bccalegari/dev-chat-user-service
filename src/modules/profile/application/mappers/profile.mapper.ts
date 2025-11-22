@@ -7,7 +7,6 @@ export class ProfileMapper {
     id: string;
     username: string;
     bio?: string;
-    avatar_url?: string;
     birth_date: string;
     user_id: string;
     created_at: Date;
@@ -19,7 +18,6 @@ export class ProfileMapper {
       username: props.username,
       birthDate: new Date(props.birth_date),
       bio: props.bio,
-      avatarUrl: props.avatar_url,
       userId: props.user_id,
       createdAt: new Date(props.created_at),
       updatedAt: props.updated_at ? new Date(props.updated_at) : undefined,
@@ -32,7 +30,6 @@ export class ProfileMapper {
       username: dto.username,
       birthDate: new Date(dto.birthDate),
       bio: dto.bio,
-      avatarUrl: dto.avatarUrl,
     });
   }
 
@@ -42,7 +39,6 @@ export class ProfileMapper {
       username: profile.username,
       birthDate: profile.birthDateString,
       bio: profile.bio,
-      avatarUrl: profile.avatarUrl,
       userId: profile.userId,
       createdAt: profile.createdAt.toISOString(),
       updatedAt: profile.updatedAt?.toISOString(),

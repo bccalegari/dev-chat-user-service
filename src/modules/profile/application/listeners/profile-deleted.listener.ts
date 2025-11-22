@@ -23,18 +23,15 @@ export class ProfileDeletedListener {
 
   @OnEvent(PROPERTIES.USER.EVENTS.DELETE.NAME)
   async execute(event: UserDeletedEvent): Promise<void> {
-    const keycloakId = event.keycloakId;
+    const userId = event.userId;
     try {
       this.logger.log(
-        `Received user deleted event for profile deletion, keycloakId=${keycloakId}`,
+        `Received user deleted event for profile deletion, userId=${userId}`,
       );
-      const user = await this.userRepository.findByKeycloakId(
-        keycloakId,
-        false,
-      );
+      const user = await this.userRepository.findById(userId, false);
 
       if (!user) {
-        this.logger.warn(`No user found, keycloakId=${keycloakId}`);
+        this.logger.warn(`No user found, userId=${userId}`);
         return;
       }
 
@@ -49,11 +46,7 @@ export class ProfileDeletedListener {
       await this.repository.delete(profile);
       this.logger.log(`Profile deleted successfully, id=${profile.id}`);
     } catch (error) {
-      logError(
-        `Error deleting profile, keycloakId=${keycloakId}`,
-        error,
-        this.logger,
-      );
+      logError(`Error deleting profile, userId=${userId}`, error, this.logger);
     }
   }
 }

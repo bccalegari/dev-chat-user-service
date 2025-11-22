@@ -11,7 +11,7 @@ import { ProfileNotFoundException } from '@modules/profile/application/exception
 import { ProfileAlreadyExistsException } from '@modules/profile/application/exceptions/profile-already-exists.exception';
 import { UpdateProfileDto } from '@modules/profile/adapters/inbound/dto/update-profile.dto';
 
-describe('UpdateProfileUsecase Unit Tests', () => {
+describe('UpdateProfileUsecase Tests', () => {
   let module: TestingModule;
   let useCase: UpdateProfileUsecase;
   let profileRepository: ProfileRepository;
@@ -46,14 +46,12 @@ describe('UpdateProfileUsecase Unit Tests', () => {
       username: 'newusername',
       birthDate: '1991-01-01',
       bio: 'Updated bio',
-      avatarUrl: 'http://example.com/avatar.png',
     };
 
     const mockProfile = {
       id: 'profile-id',
       userId: 'user-id',
       username: 'oldusername',
-      avatarUrl: 'http://example.com/old-avatar.jpg',
       bio: 'Old bio',
       birthDate: new Date('1990-01-01'),
       birthDateString: '1995-09-09',
@@ -64,7 +62,6 @@ describe('UpdateProfileUsecase Unit Tests', () => {
       mockProfile.username = dto.username!;
       mockProfile.birthDate = new Date(dto.birthDate!);
       mockProfile.bio = dto.bio!;
-      mockProfile.avatarUrl = dto.avatarUrl!;
       Object.assign(mockProfile, { updatedAt: new Date() });
       Object.assign(mockProfile, { birthDateString: dto.birthDate! });
     };
@@ -78,7 +75,6 @@ describe('UpdateProfileUsecase Unit Tests', () => {
       username: mockProfile.username,
       birthDate: mockProfile.birthDateString,
       bio: mockProfile.bio,
-      avatarUrl: mockProfile.avatarUrl,
       userId: mockProfile.userId,
       createdAt: mockProfile.createdAt.toISOString(),
       updatedAt: mockProfile.updatedAt?.toISOString(),

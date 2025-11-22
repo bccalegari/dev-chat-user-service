@@ -10,11 +10,12 @@ export class UserNeo4jRepository implements UserRepository {
 
   constructor(private readonly gateway: Neo4jGateway) {}
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string, soft: boolean = true): Promise<User | null> {
     try {
+      const deletedAtCondition = soft ? 'WHERE u.deleted_at IS NULL' : '';
       const query = `
         MATCH (u:User {id: $id})
-        WHERE u.deleted_at IS NULL
+        ${deletedAtCondition}
         RETURN u
       `;
       const params = { id };
@@ -29,35 +30,11 @@ export class UserNeo4jRepository implements UserRepository {
     }
   }
 
-  async findByKeycloakId(
-    keycloakId: string,
-    soft: boolean = true,
-  ): Promise<User | null> {
-    try {
-      const deletedAtCondition = soft ? 'WHERE u.deleted_at IS NULL' : '';
-      const query = `
-        MATCH (u:User {keycloak_id: $keycloakId})
-        ${deletedAtCondition}
-        RETURN u
-      `;
-      const params = { keycloakId };
-      return this.find(query, params);
-    } catch (error) {
-      this.logger.error(
-        `Failed to find user by keycloak id in Neo4j`,
-        error.message,
-        error.stack,
-      );
-      throw error;
-    }
-  }
-
   async create(user: User): Promise<void> {
     try {
       const query = `
         CREATE (u:User {
           id: $id,
-          keycloak_id: $keycloakId,
           email: $email,
           name: $name,
           last_name: $lastName,
@@ -67,7 +44,6 @@ export class UserNeo4jRepository implements UserRepository {
 
       const params = {
         id: user.id,
-        keycloakId: user.keycloakId,
         email: user.email,
         name: user.name,
         lastName: user.lastName,

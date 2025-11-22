@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { Neo4jModule } from '@shared/neo4j/neo4j.module';
 import { ProfileResolver } from '@modules/profile/adapters/inbound/resolvers/profile.resolver';
 import { PROFILE_REPOSITORY } from '@modules/profile/domain/repositories/profile.repository.interface';
-import { ProfileNeo4jRepository } from '@modules/profile/adapters/outbound/profile-neo4j.repository';
+import { ProfileNeo4jRepository } from '@modules/profile/adapters/outbound/repositories/profile-neo4j.repository';
 import { CreateProfileUsecase } from '@modules/profile/application/usecases/create-profile.usecase';
 import { GetProfileByUserIdUsecase } from '@modules/profile/application/usecases/get-profile-by-user-id.usecase';
 import { UpdateProfileUsecase } from '@modules/profile/application/usecases/update-profile.usecase';

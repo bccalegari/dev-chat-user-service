@@ -6,6 +6,11 @@ export class TraceIdMiddleware implements NestMiddleware {
   private readonly logger = new Logger(TraceIdMiddleware.name);
 
   use(req: any, res: any, next: (error?: any) => void): any {
+    if (req.headers['x-kong-request-id']) {
+      req.headers['x-trace-id'] = req.headers['x-kong-request-id'];
+      return next();
+    }
+
     const traceId = req.headers['x-trace-id'];
 
     if (!traceId) {

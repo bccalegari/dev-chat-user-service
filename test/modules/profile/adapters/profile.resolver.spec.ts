@@ -11,7 +11,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { LoggerFactory } from '@shared/logging/logger.factory';
 import { ProfileResolver } from '@modules/profile/adapters/inbound/resolvers/profile.resolver';
-import { ProfileNeo4jRepository } from '@modules/profile/adapters/outbound/profile-neo4j.repository';
+import { ProfileNeo4jRepository } from '@modules/profile/adapters/outbound/repositories/profile-neo4j.repository';
 import { GetProfileByUserIdUsecase } from '@modules/profile/application/usecases/get-profile-by-user-id.usecase';
 import { CreateProfileUsecase } from '@modules/profile/application/usecases/create-profile.usecase';
 import { UpdateProfileUsecase } from '@modules/profile/application/usecases/update-profile.usecase';
@@ -23,7 +23,7 @@ import {
 import { UserNeo4jRepository } from '@modules/user/adapters/outbound/repositories/user-neo4j.repository';
 import { User } from '@modules/user/domain/entities/user';
 
-describe('ProfileResolver E2E Tests', () => {
+describe('ProfileResolver Tests', () => {
   let app: INestApplication<App>;
 
   const mockProfile = Profile.from({
@@ -32,7 +32,6 @@ describe('ProfileResolver E2E Tests', () => {
     username: 'johndoe',
     bio: 'This is a sample bio',
     birthDate: new Date('1995-09-09'),
-    avatarUrl: 'http://example.com/avatar.jpg',
     createdAt: new Date(),
   });
 
@@ -49,14 +48,12 @@ describe('ProfileResolver E2E Tests', () => {
     findById: jest.fn().mockResolvedValue(
       User.from({
         id: '123',
-        keycloakId: 'keycloak-123',
         name: 'bruno',
         lastName: 'silva',
         email: 'bruno@email.com',
         createdAt: new Date(),
       }),
     ),
-    findByKeycloakId: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
@@ -93,7 +90,7 @@ describe('ProfileResolver E2E Tests', () => {
 
     app = moduleFixture.createNestApplication();
 
-    app.useLogger(LoggerFactory('ProfileResolverE2E'));
+    app.useLogger(LoggerFactory('ProfileResolverTest'));
 
     await app.init();
   });
@@ -110,7 +107,6 @@ describe('ProfileResolver E2E Tests', () => {
           username
           birthDate
           bio
-          avatarUrl
           userId
           createdAt
         }
@@ -127,7 +123,6 @@ describe('ProfileResolver E2E Tests', () => {
           username: 'johndoe',
           birthDate: '1995-09-09',
           bio: 'This is a sample bio',
-          avatarUrl: 'http://example.com/avatar.jpg',
           userId: 'user-123',
           createdAt: expect.any(String),
         });
@@ -144,13 +139,11 @@ describe('ProfileResolver E2E Tests', () => {
           username: "johndoe",
           bio: "This is a sample bio",
           birthDate: "1995-09-09",
-          avatarUrl: "http://example.com/avatar.jpg"
         }) {
           id
           username
           birthDate
           bio
-          avatarUrl
           userId
           createdAt
         }
@@ -167,7 +160,6 @@ describe('ProfileResolver E2E Tests', () => {
           username: 'johndoe',
           birthDate: '1995-09-09',
           bio: 'This is a sample bio',
-          avatarUrl: 'http://example.com/avatar.jpg',
           userId: 'user-123',
           createdAt: expect.any(String),
         });
@@ -182,13 +174,11 @@ describe('ProfileResolver E2E Tests', () => {
           username: "john_doe_updated",
           bio: "This is an updated bio",
           birthDate: "1995-10-10",
-          avatarUrl: "http://example.com/avatar-updated.jpg"
         }) {
           id
           username
           birthDate
           bio
-          avatarUrl
           userId
           createdAt
         }
@@ -205,7 +195,6 @@ describe('ProfileResolver E2E Tests', () => {
           username: 'john_doe_updated',
           birthDate: '1995-10-10',
           bio: 'This is an updated bio',
-          avatarUrl: 'http://example.com/avatar-updated.jpg',
           userId: 'user-123',
           createdAt: expect.any(String),
         });

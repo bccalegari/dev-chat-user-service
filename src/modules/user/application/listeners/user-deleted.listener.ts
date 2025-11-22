@@ -30,28 +30,22 @@ export class UserDeletedListener {
   ): Promise<void> {
     try {
       this.logger.log(
-        `Received user deleted event for user deletion, keycloakId=${event.keycloakId}`,
+        `Received user deleted event for user deletion, id=${event.userId}`,
       );
-      const user = await this.findByKeycloakId(event.keycloakId);
+      const user = await this.findByUserId(event.userId);
       user.delete(event.deletedAt);
       await this.repository.delete(user);
-      this.logger.log(
-        `User deleted successfully, id=${user.id}, keycloakId=${user.keycloakId}`,
-      );
+      this.logger.log(`User deleted successfully, id=${user.id}`);
     } catch (error) {
-      logError(
-        `Error deleting user, keycloakId=${event.keycloakId}`,
-        error,
-        this.logger,
-      );
+      logError(`Error deleting user, id=${event.userId}`, error, this.logger);
       await this.deadLetterKafkaPublisher.publish(
         DeadLetterEvent.from(kafkaMessage, error, TraceService.getTraceId()),
       );
     }
   }
 
-  private async findByKeycloakId(keycloakId: string): Promise<User> {
-    const user = await this.repository.findByKeycloakId(keycloakId);
+  private async findByUserId(userId: string): Promise<User> {
+    const user = await this.repository.findById(userId);
     if (!user) {
       throw new UserNotFoundException();
     }

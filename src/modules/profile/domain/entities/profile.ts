@@ -8,7 +8,6 @@ export class Profile {
     private _username: string,
     private _birthDate: Date,
     private _bio?: string,
-    private _avatarUrl?: string,
     private _updatedAt?: Date,
     private _deletedAt?: Date,
   ) {
@@ -18,7 +17,6 @@ export class Profile {
     this._username = _username;
     this._birthDate = _birthDate;
     this._bio = _bio;
-    this._avatarUrl = _avatarUrl;
     this._updatedAt = _updatedAt;
     this.validate();
   }
@@ -37,7 +35,6 @@ export class Profile {
       props.username,
       props.birthDate,
       props.bio,
-      props.avatarUrl,
     );
   }
 
@@ -58,7 +55,6 @@ export class Profile {
       props.username,
       props.birthDate,
       props.bio,
-      props.avatarUrl,
       props.updatedAt,
     );
   }
@@ -77,9 +73,6 @@ export class Profile {
     }
     if (props.bio !== undefined) {
       this._bio = props.bio;
-    }
-    if (props.avatarUrl !== undefined) {
-      this._avatarUrl = props.avatarUrl;
     }
     this._updatedAt = new Date();
     this.validate();
@@ -105,10 +98,6 @@ export class Profile {
     return this._bio;
   }
 
-  get avatarUrl(): string | undefined {
-    return this._avatarUrl;
-  }
-
   get updatedAt(): Date | undefined {
     return this._updatedAt;
   }
@@ -131,12 +120,6 @@ export class Profile {
     }
     if (this._bio && this._bio.length > 500) {
       throw new Error('Bio cannot exceed 500 characters');
-    }
-    if (
-      this._avatarUrl &&
-      !/^http?:\/\/.+\.(jpg|jpeg|png)$/.test(this._avatarUrl)
-    ) {
-      throw new Error('Avatar URL must be a valid image URL');
     }
     if (this._updatedAt && this._updatedAt < this.createdAt) {
       throw new Error('Updated date cannot be earlier than created date');

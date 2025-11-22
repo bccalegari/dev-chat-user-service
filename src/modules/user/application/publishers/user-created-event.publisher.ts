@@ -25,7 +25,7 @@ export class UserCreatedEventPublisher implements UserEventPublisherStrategy {
     try {
       const userCreatedEvent = UserCreatedEventMapper.from(event);
       this.logger.log(
-        `Publishing user created event, keycloakId=${userCreatedEvent.keycloakId}`,
+        `Publishing user created event, id=${userCreatedEvent.userId}`,
       );
       await this.eventEmitter.emitAsync(
         PROPERTIES.USER.EVENTS.CREATE.NAME,

@@ -32,7 +32,6 @@ export class UpdateProfileUsecase {
         username: dto.username ?? profile.username,
         birthDate: dto.birthDate ? new Date(dto.birthDate) : profile.birthDate,
         bio: dto.bio,
-        avatarUrl: dto.avatarUrl,
       });
       await this.profileRepository.update(profile);
       return ProfileMapper.toGetProfileDto(profile);

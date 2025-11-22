@@ -25,7 +25,7 @@ export class UserDeletedEventPublisher implements UserEventPublisherStrategy {
     try {
       const userDeletedEvent = UserDeletedEventMapper.from(event);
       this.logger.log(
-        `Publishing user deleted event, keycloakId=${userDeletedEvent.keycloakId}`,
+        `Publishing user deleted event, id=${userDeletedEvent.userId}`,
       );
       await this.eventEmitter.emitAsync(
         PROPERTIES.USER.EVENTS.DELETE.NAME,

@@ -85,7 +85,6 @@ export class ProfileNeo4jRepository implements ProfileRepository {
           username: $username,
           birth_date: $birthDate,
           bio: $bio,
-          avatar_url: $avatarUrl,
           user_id: $userId,
           created_at: $createdAt
         })
@@ -97,7 +96,6 @@ export class ProfileNeo4jRepository implements ProfileRepository {
         username: profile.username,
         birthDate: profile.birthDateString,
         bio: profile.bio,
-        avatarUrl: profile.avatarUrl,
         userId: profile.userId,
         createdAt: profile.createdAt.toISOString(),
       };
@@ -121,7 +119,6 @@ export class ProfileNeo4jRepository implements ProfileRepository {
         SET p.username = $username,
             p.birth_date = $birthDate,
             p.bio = $bio,
-            p.avatar_url = $avatarUrl,
             p.updated_at = $updatedAt
       `;
 
@@ -130,7 +127,6 @@ export class ProfileNeo4jRepository implements ProfileRepository {
         username: profile.username,
         birthDate: profile.birthDateString,
         bio: profile.bio,
-        avatarUrl: profile.avatarUrl,
         updatedAt: profile.updatedAt!.toISOString(),
       };
 

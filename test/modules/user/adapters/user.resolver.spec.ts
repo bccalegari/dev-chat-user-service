@@ -15,13 +15,12 @@ import { join } from 'path';
 import { User } from '@modules/user/domain/entities/user';
 import { LoggerFactory } from '@shared/logging/logger.factory';
 
-describe('UserResolver E2E Tests', () => {
+describe('UserResolver Tests', () => {
   let app: INestApplication<App>;
   const userRepository = {
     findById: jest.fn().mockResolvedValue(
       User.from({
         id: '123',
-        keycloakId: 'keycloak-123',
         name: 'bruno',
         lastName: 'silva',
         email: 'bruno@email.com',
@@ -57,7 +56,7 @@ describe('UserResolver E2E Tests', () => {
 
     app = moduleFixture.createNestApplication();
 
-    app.useLogger(LoggerFactory('UserResolverE2E'));
+    app.useLogger(LoggerFactory('UserResolverTest'));
 
     await app.init();
   });

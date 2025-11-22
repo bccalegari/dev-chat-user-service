@@ -9,7 +9,7 @@ import { GetProfileByUserIdUsecase } from '@modules/profile/application/usecases
 import { Profile } from '@modules/profile/domain/entities/profile';
 import { ProfileNotFoundException } from '@modules/profile/application/exceptions/profile-not-found.exception';
 
-describe('GetProfileByUserIdUsecase Unit Tests', () => {
+describe('GetProfileByUserIdUsecase Tests', () => {
   let module: TestingModule;
   let useCase: GetProfileByUserIdUsecase;
   let profileRepository: ProfileRepository;
@@ -45,7 +45,6 @@ describe('GetProfileByUserIdUsecase Unit Tests', () => {
       birthDate: new Date('1990-01-01'),
       birthDateString: '1995-09-09',
       bio: 'Hello, I am John Doe',
-      avatarUrl: 'http://example.com/avatar.jpg',
       createdAt: new Date(),
       updatedAt: new Date(),
     } as Profile;
@@ -57,7 +56,6 @@ describe('GetProfileByUserIdUsecase Unit Tests', () => {
       username: mockProfile.username,
       birthDate: mockProfile.birthDateString,
       bio: mockProfile.bio,
-      avatarUrl: mockProfile.avatarUrl,
       userId: mockProfile.userId,
       createdAt: mockProfile.createdAt.toISOString(),
       updatedAt: mockProfile.updatedAt?.toISOString(),

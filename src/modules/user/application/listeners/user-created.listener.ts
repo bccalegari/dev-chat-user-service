@@ -28,20 +28,12 @@ export class UserCreatedListener {
     kafkaMessage: KafkaMessage,
   ): Promise<void> {
     try {
-      this.logger.log(
-        `Received user created event, keycloakId=${event.keycloakId}`,
-      );
+      this.logger.log(`Received user created event, id=${event.userId}`);
       const user = User.create(event);
       await this.repository.create(user);
-      this.logger.log(
-        `User created successfully, id=${user.id}, keycloakId=${user.keycloakId}`,
-      );
+      this.logger.log(`User created successfully, id=${user.id}`);
     } catch (error) {
-      logError(
-        `Error creating user, keycloakId=${event.keycloakId}`,
-        error,
-        this.logger,
-      );
+      logError(`Error creating user, id=${event.userId}`, error, this.logger);
       await this.dlqKafkaPublisher.publish(
         DeadLetterEvent.from(kafkaMessage, error, TraceService.getTraceId()),
       );

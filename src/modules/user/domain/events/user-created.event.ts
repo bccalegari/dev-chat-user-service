@@ -1,6 +1,6 @@
 export class UserCreatedEvent {
   constructor(
-    readonly keycloakId: string,
+    readonly userId: string,
     readonly email: string,
     readonly name: string,
     readonly lastName: string,

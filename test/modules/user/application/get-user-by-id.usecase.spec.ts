@@ -40,7 +40,6 @@ describe('GetUserByIdUseCase Unit Tests', () => {
     const userId = 'existing-id';
     const mockUser = {
       id: userId,
-      keycloakId: 'keycloak-id',
       name: 'John',
       lastName: 'Doe',
       email: 'johndoe@email.com',
